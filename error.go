@@ -41,6 +41,7 @@ func (e *BaseError) CallStack() []CallStackEntry {
 
 	subErr, ok := e.Cause.(Error)
 	if !ok {
+		res = append(res, CallStackEntry{ErrMessage: e.Error()})
 		return res
 	}
 
