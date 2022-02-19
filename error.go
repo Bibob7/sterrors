@@ -22,7 +22,7 @@ type Caller struct {
 }
 
 type CallStackEntry struct {
-	ErrMessage string
+	Err error
 	Caller     Caller
 }
 
@@ -37,11 +37,11 @@ func (e BaseError) Error() string {
 // It adds CallStack entries recursively based on error causes
 // as long they also implement the Error interface
 func (e *BaseError) CallStack() []CallStackEntry {
-	res := []CallStackEntry{{ErrMessage: e.Error(), Caller: e.Caller}}
+	res := []CallStackEntry{{Err: e, Caller: e.Caller}}
 
 	subErr, ok := e.Cause.(Error)
 	if !ok {
-		res = append(res, CallStackEntry{ErrMessage: e.Error()})
+		res = append(res, CallStackEntry{Err: e})
 		return res
 	}
 
