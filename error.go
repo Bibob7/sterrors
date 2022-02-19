@@ -31,15 +31,15 @@ type CallStackEntry struct {
 type Kind int
 type Severity int
 
-func (e BaseError) Error() string {
+func (e *BaseError) Error() string {
 	return e.message
 }
 
-func (e BaseError) Cause() error {
+func (e *BaseError) Cause() error {
 	return e.cause
 }
 
-func (e BaseError) Severity() Severity {
+func (e *BaseError) Severity() Severity {
 	return e.severity
 }
 
