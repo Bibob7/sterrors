@@ -23,7 +23,7 @@ func SetDefaultCreateErrorFunc(customCreateErrorFunc CreateFunc) {
 func E(args ...interface{}) error {
 	e := createError()
 	e.setCaller(caller())
-	e.Enrich(args...)
+	e.enrich(args...)
 	return e
 }
 

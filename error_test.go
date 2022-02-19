@@ -11,6 +11,9 @@ func callFake() Caller {
 }
 
 func TestBaseError_CallStack(t *testing.T) {
+	SetDefaultCreateErrorFunc(func() Error {
+		return &BaseError{}
+	})
 	initErr := fmt.Errorf("initial error")
 	secErr, secondCall := E("second error", initErr), callFake()
 	thirdErr, thirdCall := E("third error", secErr), callFake()
@@ -36,7 +39,7 @@ func TestBaseError_Enrich(t *testing.T) {
 	severity := SeverityInfo
 
 	e := BaseError{}
-	e.Enrich(message, cause, severity)
+	e.enrich(message, cause, severity)
 
 	assert.Equal(t, e.message, message)
 	assert.Equal(t, e.severity, severity)

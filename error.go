@@ -3,10 +3,10 @@ package sterrors
 type Error interface {
 	error
 	CallStack() []CallStackEntry
-	Enrich(args ...interface{})
-	setCaller(caller Caller)
 	Cause() error
 	Severity() Severity
+	enrich(args ...interface{})
+	setCaller(caller Caller)
 }
 
 type BaseError struct {
@@ -81,10 +81,10 @@ func (e *CustomErrorType) Enrich(args ...interface{}) {
 			e.CustomAttribute = arg
 		}
 	}
-	e.BaseError.Enrich(args...)
+	e.BaseError.enrich(args...)
 }
 */
-func (e *BaseError) Enrich(args ...interface{}) {
+func (e *BaseError) enrich(args ...interface{}) {
 	for _, arg := range args {
 		switch arg := arg.(type) {
 		case error:
