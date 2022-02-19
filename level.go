@@ -9,16 +9,16 @@ const (
 )
 
 func Level(err error) Severity {
-	e, ok := err.(*BaseError)
+	e, ok := err.(Error)
 	if !ok {
 		return SeverityError
 	}
 
-	if e.Cause != nil {
-		causeSeverity := Level(e.Cause)
-		if causeSeverity > e.Severity {
+	if e.Cause() != nil {
+		causeSeverity := Level(e.Cause())
+		if causeSeverity > e.Severity() {
 			return causeSeverity
 		}
 	}
-	return e.Severity
+	return e.Severity()
 }

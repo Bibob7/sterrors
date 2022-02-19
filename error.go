@@ -5,14 +5,16 @@ type Error interface {
 	CallStack() []CallStackEntry
 	Enrich(args ...interface{})
 	setCaller(caller Caller)
+	Cause() error
+	Severity() Severity
 }
 
 type BaseError struct {
-	Message  string
-	Caller   Caller
-	Kind     Kind
-	Severity Severity
-	Cause    error
+	message  string
+	caller   Caller
+	kind     Kind
+	severity Severity
+	cause    error
 }
 
 type Caller struct {
@@ -22,7 +24,7 @@ type Caller struct {
 }
 
 type CallStackEntry struct {
-	Err error
+	ErrMessage string
 	Caller     Caller
 }
 
@@ -30,18 +32,28 @@ type Kind int
 type Severity int
 
 func (e BaseError) Error() string {
-	return e.Message
+	return e.message
+}
+
+func (e BaseError) Cause() error {
+	return e.cause
+}
+
+func (e BaseError) Severity() Severity {
+	return e.severity
 }
 
 // CallStack returns the callstack
 // It adds CallStack entries recursively based on error causes
 // as long they also implement the Error interface
 func (e *BaseError) CallStack() []CallStackEntry {
-	res := []CallStackEntry{{Err: e, Caller: e.Caller}}
+	res := []CallStackEntry{{ErrMessage: e.Error(), Caller: e.caller}}
 
-	subErr, ok := e.Cause.(Error)
+	subErr, ok := e.cause.(Error)
 	if !ok {
-		res = append(res, CallStackEntry{Err: e})
+		if e.cause != nil {
+			res = append(res, CallStackEntry{ErrMessage: e.cause.Error()})
+		}
 		return res
 	}
 
@@ -76,13 +88,13 @@ func (e *BaseError) Enrich(args ...interface{}) {
 	for _, arg := range args {
 		switch arg := arg.(type) {
 		case error:
-			e.Cause = arg
+			e.cause = arg
 		case Kind:
-			e.Kind = arg
+			e.kind = arg
 		case Severity:
-			e.Severity = arg
+			e.severity = arg
 		case string:
-			e.Message = arg
+			e.message = arg
 		default:
 			// ignore unknown arg types
 		}
@@ -91,5 +103,5 @@ func (e *BaseError) Enrich(args ...interface{}) {
 
 // setCaller is used during the creation to set the caller
 func (e *BaseError) setCaller(caller Caller) {
-	e.Caller = caller
+	e.caller = caller
 }
