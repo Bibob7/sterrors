@@ -5,6 +5,8 @@ type Error interface {
 	CallStack() []CallStackEntry
 	Cause() error
 	Severity() Severity
+	Kind() Kind
+	Caller() Caller
 	enrich(args ...interface{})
 	setCaller(caller Caller)
 }
@@ -41,6 +43,14 @@ func (e *BaseError) Cause() error {
 
 func (e *BaseError) Severity() Severity {
 	return e.severity
+}
+
+func (e *BaseError) Kind() Kind {
+	return e.kind
+}
+
+func (e *BaseError) Caller() Caller {
+	return e.caller
 }
 
 // CallStack returns the callstack
