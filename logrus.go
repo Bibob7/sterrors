@@ -5,32 +5,36 @@ import (
 )
 
 func LogrusLog(err error) {
-	sysErr, ok := err.(Error)
+	stErr, ok := err.(Error)
 	if !ok {
 		logrus.Error(err)
 		return
 	}
 
 	entry := logrus.WithFields(logrus.Fields{
-		"stack": sysErr.CallStack(),
-		"kind":  sysErr.Kind()})
+		"stack": stErr.CallStack(),
+		"kind":  stErr.Kind()})
 
-	logSysError(sysErr, entry)
+	logError(stErr, entry)
 }
 
-func logSysError(sysErr Error, entry *logrus.Entry) {
-	switch Level(sysErr) {
+func logError(err Error, entry *logrus.Entry) {
+	switch Level(err) {
 	case SeverityWarning:
 		entry.Data["severity"] = "warning"
-		entry.Warnf("%s: %v", sysErr.Caller().FuncName, sysErr)
+		entry.Warnf("%s: %v", err.Caller().FuncName, err)
 	case SeverityInfo:
 		entry.Data["severity"] = "info"
-		entry.Infof("%s: %v", sysErr.Caller().FuncName, sysErr)
+		entry.Infof("%s: %v", err.Caller().FuncName, err)
 	case SeverityDebug:
 		entry.Data["severity"] = "debug"
-		entry.Debugf("%s: %v", sysErr.Caller().FuncName, sysErr)
+		entry.Debugf("%s: %v", err.Caller().FuncName, err)
+	case SeverityNotice:
+		entry.Data["severity"] = "notice"
+		entry.Debugf("%s: %v", err.Caller().FuncName, err)
+	case SeverityError:
 	default:
 		entry.Data["severity"] = "error"
-		entry.Errorf("%s: %v", sysErr.Caller().FuncName, sysErr)
+		entry.Errorf("%s: %v", err.Caller().FuncName, err)
 	}
 }
