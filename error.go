@@ -26,8 +26,8 @@ type Caller struct {
 }
 
 type CallStackEntry struct {
-	ErrMessage string
-	Caller     Caller
+	ErrMessage string `json:"errMessage,omitempty" yaml:"errMessage,omitempty"`
+	Caller     Caller `json:"caller,omitempty" yaml:"caller,omitempty"`
 }
 
 type Kind int
@@ -59,11 +59,13 @@ func (e *BaseError) Caller() Caller {
 func (e *BaseError) CallStack() []CallStackEntry {
 	res := []CallStackEntry{{ErrMessage: e.Error(), Caller: e.caller}}
 
+	if e.cause == nil {
+		return res
+	}
+
 	subErr, ok := e.cause.(Error)
 	if !ok {
-		if e.cause != nil {
-			res = append(res, CallStackEntry{ErrMessage: e.cause.Error()})
-		}
+		res = append(res, CallStackEntry{ErrMessage: e.cause.Error()})
 		return res
 	}
 
