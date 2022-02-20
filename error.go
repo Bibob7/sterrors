@@ -30,7 +30,7 @@ type CallStackEntry struct {
 	Caller     Caller `json:"caller,omitempty"`
 }
 
-type Kind int
+type Kind string
 type Severity int
 
 func (e *BaseError) Error() string {
