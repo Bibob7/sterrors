@@ -26,7 +26,7 @@ type Caller struct {
 }
 
 type CallStackEntry struct {
-	ErrMessage string `json:"errMessage,omitempty"`
+	ErrMessage string `json:"msg,omitempty"`
 	Caller     Caller `json:"caller,omitempty"`
 }
 
