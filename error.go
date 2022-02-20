@@ -20,14 +20,14 @@ type BaseError struct {
 }
 
 type Caller struct {
-	FuncName string
-	File     string
-	Line     int
+	FuncName string `json:"funcName,omitempty"`
+	File     string `json:"file,omitempty"`
+	Line     int    `json:"line,omitempty"`
 }
 
 type CallStackEntry struct {
-	ErrMessage string `json:"errMessage,omitempty" yaml:"errMessage,omitempty"`
-	Caller     Caller `json:"caller,omitempty" yaml:"caller,omitempty"`
+	ErrMessage string `json:"errMessage,omitempty"`
+	Caller     Caller `json:"caller,omitempty"`
 }
 
 type Kind int
