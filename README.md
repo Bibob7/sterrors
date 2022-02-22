@@ -1,5 +1,8 @@
 # Sterrors
 
+[![codecov](https://codecov.io/gh/Bibob7/sterrors/branch/main/graph/badge.svg?token=2LURD0VD9X)](https://codecov.io/gh/Bibob7/sterrors)
+[![CircleCI](https://circleci.com/gh/Bibob7/sterrors/tree/main.svg?style=svg)](https://circleci.com/gh/Bibob7/sterrors/tree/main)
+
 sterrors is a simple library which will provide error types with stack traces, severity levels and error kinds.
 
 You can extend the provides BaseError type and add you own application specific attributes that you may want to log.
