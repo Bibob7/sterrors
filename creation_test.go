@@ -27,9 +27,8 @@ func TestE(t *testing.T) {
 	message := "Error message"
 	err := fmt.Errorf("error Cause")
 	severity := SeverityError
-	const testKind Kind = 0
 
-	resultErr := E(message, err, severity, testKind)
+	resultErr := E(message, err, severity)
 
 	assert.IsType(t, &BaseError{}, resultErr)
 	e := resultErr.(*BaseError)
@@ -37,7 +36,6 @@ func TestE(t *testing.T) {
 	assert.Equal(t, e.message, message)
 	assert.Equal(t, e.cause, err)
 	assert.Equal(t, e.severity, severity)
-	assert.Equal(t, e.kind, testKind)
 }
 
 func TestEWithCustomErrorType(t *testing.T) {
@@ -48,19 +46,16 @@ func TestEWithCustomErrorType(t *testing.T) {
 	testCases := map[string]struct {
 		Message         string
 		Severity        Severity
-		Kind            Kind
 		CustomAttribute CustomAttribute
 	}{
 		"Simple custom error type": {
 			Message:         "Error message",
 			Severity:        SeverityError,
-			Kind:            0,
 			CustomAttribute: 1,
 		},
 		"Cause is also a custom error": {
 			Message:         "Error message",
 			Severity:        SeverityError,
-			Kind:            0,
 			CustomAttribute: 1,
 		},
 	}
@@ -68,7 +63,7 @@ func TestEWithCustomErrorType(t *testing.T) {
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
 			cause := E("Cause message", SeverityWarning)
-			resultErr := E(tc.Message, cause, tc.Severity, tc.Kind, tc.CustomAttribute)
+			resultErr := E(tc.Message, cause, tc.Severity, tc.CustomAttribute)
 
 			assert.IsType(t, &CustomErrorType{}, resultErr)
 			e := resultErr.(*CustomErrorType)
@@ -76,7 +71,6 @@ func TestEWithCustomErrorType(t *testing.T) {
 			assert.Equal(t, e.message, tc.Message)
 			assert.Equal(t, e.cause, cause)
 			assert.Equal(t, e.severity, tc.Severity)
-			assert.Equal(t, e.kind, tc.Kind)
 			assert.Equal(t, e.CustomAttribute, tc.CustomAttribute)
 		})
 	}

@@ -2,10 +2,8 @@ package sterrors
 
 type Error interface {
 	error
-	CallStack() []CallStackEntry
 	Cause() error
 	Severity() Severity
-	Kind() Kind
 	Caller() Caller
 	enrich(args ...interface{})
 	setCaller(caller Caller)
@@ -14,7 +12,6 @@ type Error interface {
 type BaseError struct {
 	message  string
 	caller   Caller
-	kind     Kind
 	severity Severity
 	cause    error
 }
@@ -30,7 +27,6 @@ type CallStackEntry struct {
 	Caller     Caller `json:"caller,omitempty"`
 }
 
-type Kind string
 type Severity int
 
 func (e *BaseError) Error() string {
@@ -45,33 +41,8 @@ func (e *BaseError) Severity() Severity {
 	return e.severity
 }
 
-func (e *BaseError) Kind() Kind {
-	return e.kind
-}
-
 func (e *BaseError) Caller() Caller {
 	return e.caller
-}
-
-// CallStack returns the callstack
-// It adds CallStack entries recursively based on error causes
-// as long they also implement the Error interface
-func (e *BaseError) CallStack() []CallStackEntry {
-	res := []CallStackEntry{{ErrMessage: e.Error(), Caller: e.caller}}
-
-	if e.cause == nil {
-		return res
-	}
-
-	subErr, ok := e.cause.(Error)
-	if !ok {
-		res = append(res, CallStackEntry{ErrMessage: e.cause.Error()})
-		return res
-	}
-
-	res = append(res, subErr.CallStack()...)
-
-	return res
 }
 
 /*
@@ -101,8 +72,6 @@ func (e *BaseError) enrich(args ...interface{}) {
 		switch arg := arg.(type) {
 		case error:
 			e.cause = arg
-		case Kind:
-			e.kind = arg
 		case Severity:
 			e.severity = arg
 		case string:
