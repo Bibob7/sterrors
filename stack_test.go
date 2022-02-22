@@ -38,3 +38,12 @@ func TestCallStack_WithNotTraceableErr(t *testing.T) {
 	assert.Len(t, callStack, 1)
 	assert.Equal(t, "initial error", callStack[0].ErrMessage)
 }
+
+func TestCallStack_WithErrWithoutCause(t *testing.T) {
+	err := E("initial error")
+
+	callStack := CallStack(err)
+
+	assert.Len(t, callStack, 1)
+	assert.Equal(t, "initial error", callStack[0].ErrMessage)
+}
