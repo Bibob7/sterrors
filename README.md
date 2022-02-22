@@ -69,3 +69,5 @@ Output:
   }
 ]
 ```
+
+Inspired by a talk from GopherCon 2019: https://www.youtube.com/watch?v=4WIhhzTTd0Y
