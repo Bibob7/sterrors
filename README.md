@@ -36,10 +36,9 @@ func main() {
 	err := anotherMethod()
 
 	// second error that results from the first one
-	seconds := sterrors.E("action not possible", sterrors.SeverityError, err)
-
-	e, _ := seconds.(sterrors.Error)
-	jsonStackTrace, _ := json.Marshal(e.CallStack())
+	second := sterrors.E("action not possible", sterrors.SeverityError, err)
+	
+	jsonStackTrace, _ := json.Marshal(sterrors.CallStack(second))
 	fmt.Printf("%s", jsonStackTrace)
 }
 
