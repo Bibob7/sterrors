@@ -47,3 +47,9 @@ func TestCallStack_WithErrWithoutCause(t *testing.T) {
 	assert.Len(t, callStack, 1)
 	assert.Equal(t, "initial error", callStack[0].ErrMessage)
 }
+
+func TestCallStack_WithNil(t *testing.T) {
+	callStack := CallStack(nil)
+
+	assert.Len(t, callStack, 0)
+}
