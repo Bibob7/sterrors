@@ -51,21 +51,21 @@ Output:
 
 ```json
 [
-   {
-      "ErrMessage":"action not possible",
-      "Caller":{
-         "FuncName":"main.main",
-         "File":"/Users/test/Repositories/sterrors/main/main.go",
-         "Line":13
-      }
-   },
-   {
-      "ErrMessage":"some error message",
-      "Caller":{
-         "FuncName":"main.anotherMethod",
-         "File":"/Users/test/Repositories/sterrors/main/main.go",
-         "Line":21
-      }
-   }
+  {
+    "msg": "action not possible",
+    "caller": {
+      "funcName": "main.main",
+      "file": "/Users/kevin/Repositories/sterrors/examples/main.go",
+      "line": 13
+    }
+  },
+  {
+    "msg": "some error message",
+    "caller": {
+      "funcName": "main.anotherMethod",
+      "file": "/Users/kevin/Repositories/sterrors/examples/main.go",
+      "line": 20
+    }
+  }
 ]
 ```
