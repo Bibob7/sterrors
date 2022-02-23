@@ -49,7 +49,7 @@ func TestLevel(t *testing.T) {
 				}
 			}
 
-			assert.Equal(t, tc.ExpectedSeverity, Level(lastErr))
+			assert.Equal(t, tc.ExpectedSeverity, HighestSeverity(lastErr))
 		})
 	}
 }
