@@ -2,6 +2,7 @@ package sterrors
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -29,23 +30,70 @@ type TestCallStackEntry struct {
 }
 
 func TestLogrusFormatter_Log(t *testing.T) {
+	outputWriter := &TestWriter{}
+	logrus.SetOutput(outputWriter)
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+
+	err := E("initial error", SeverityWarning)
+	secondErr := E("second error", err, SeverityError)
+
+	formatter := LogrusLogger{}
+	formatter.Log(secondErr)
+
+	var output TestOutput
+	unmarshalErr := json.Unmarshal(outputWriter.Content, &output)
+
+	e := err.(Error)
+	secondE := secondErr.(Error)
+
+	assert.Nil(t, unmarshalErr)
+	assert.Equal(t, "sterrors.TestLogrusFormatter_Log: second error", output.Msg)
+	assert.Equal(t, "error", output.Level)
+	assert.Len(t, output.CallStack, 2)
+	assert.Equal(t, TestCallStackEntry{
+		ErrMessage: "second error",
+		Severity:   "error",
+		Caller: Caller{
+			FuncName: secondE.Caller().FuncName,
+			File:     secondE.Caller().File,
+			Line:     secondE.Caller().Line,
+		},
+	}, output.CallStack[0])
+	assert.Equal(t, TestCallStackEntry{
+		ErrMessage: "initial error",
+		Severity:   "warning",
+		Caller: Caller{
+			FuncName: e.Caller().FuncName,
+			File:     e.Caller().File,
+			Line:     e.Caller().Line,
+		},
+	}, output.CallStack[1])
+}
+
+func TestLogrusLogger_LogHighestSeverities(t *testing.T) {
 	testCases := map[string]struct {
-		FinalLogLevel Severity
+		HighestSeverity Severity
+		LogrusLevel     string
 	}{
 		"Severity Error": {
-			FinalLogLevel: SeverityError,
+			HighestSeverity: SeverityError,
+			LogrusLevel:     "error",
 		},
 		"Severity Warning": {
-			FinalLogLevel: SeverityWarning,
-		},
-		"Severity Notice": {
-			FinalLogLevel: SeverityNotice,
+			HighestSeverity: SeverityWarning,
+			LogrusLevel:     "warning",
 		},
 		"Severity Info": {
-			FinalLogLevel: SeverityInfo,
+			HighestSeverity: SeverityInfo,
+			LogrusLevel:     "info",
+		},
+		"Severity Notice": {
+			HighestSeverity: SeverityNotice,
+			LogrusLevel:     "info",
 		},
 		"Severity Debug": {
-			FinalLogLevel: SeverityDebug,
+			HighestSeverity: SeverityDebug,
+			LogrusLevel:     "debug",
 		},
 	}
 
@@ -54,41 +102,18 @@ func TestLogrusFormatter_Log(t *testing.T) {
 			outputWriter := &TestWriter{}
 			logrus.SetOutput(outputWriter)
 			logrus.SetFormatter(&logrus.JSONFormatter{})
+			logrus.SetLevel(logrus.DebugLevel)
 
-			err := E("initial error", SeverityWarning)
-			secondErr := E("second error", err, tc.FinalLogLevel)
+			secondErr := E("second error", tc.HighestSeverity)
 
 			formatter := LogrusLogger{}
 			formatter.Log(secondErr)
 
+			fmt.Println(string(outputWriter.Content))
 			var output TestOutput
 			unmarshalErr := json.Unmarshal(outputWriter.Content, &output)
-
-			e := err.(Error)
-			secondE := secondErr.(Error)
-
-			assert.Nil(t, unmarshalErr)
-			assert.Equal(t, "sterrors.TestLogrusFormatter_Log.func1: second error", output.Msg)
-			assert.Equal(t, HighestSeverity(secondE).String(), output.Level)
-			assert.Len(t, output.CallStack, 2)
-			assert.Equal(t, TestCallStackEntry{
-				ErrMessage: "second error",
-				Severity:   secondE.Severity().String(),
-				Caller: Caller{
-					FuncName: secondE.Caller().FuncName,
-					File:     secondE.Caller().File,
-					Line:     secondE.Caller().Line,
-				},
-			}, output.CallStack[0])
-			assert.Equal(t, TestCallStackEntry{
-				ErrMessage: "initial error",
-				Severity:   e.Severity().String(),
-				Caller: Caller{
-					FuncName: e.Caller().FuncName,
-					File:     e.Caller().File,
-					Line:     e.Caller().Line,
-				},
-			}, output.CallStack[1])
+			assert.Nilf(t, unmarshalErr, fmt.Sprintln(string(outputWriter.Content)))
+			assert.Equal(t, tc.LogrusLevel, output.Level)
 		})
 	}
 }

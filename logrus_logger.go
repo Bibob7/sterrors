@@ -14,10 +14,12 @@ func (f *LogrusLogger) Log(err error) {
 	}
 	entry := logrus.WithFields(logrus.Fields{"stack": CallStack(e)})
 	switch HighestSeverity(e) {
-	case SeverityWarning:
-		entry.Warnf("%s: %v", e.Caller().FuncName, e)
 	case SeverityInfo:
 		entry.Infof("%s: %v", e.Caller().FuncName, e)
+	case SeverityNotice:
+		entry.Infof("%s: %v", e.Caller().FuncName, e)
+	case SeverityWarning:
+		entry.Warnf("%s: %v", e.Caller().FuncName, e)
 	case SeverityDebug:
 		entry.Debugf("%s: %v", e.Caller().FuncName, e)
 	default:
