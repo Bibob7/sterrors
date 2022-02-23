@@ -1,12 +1,12 @@
 package sterrors
 
-var defaultFormatter LogFormatter = &LogrusFormatter{}
+var defaultFormatter Logger = &LogrusLogger{}
 
-type LogFormatter interface {
+type Logger interface {
 	Log(err error)
 }
 
-func SetFormatter(formatter LogFormatter) {
+func SetFormatter(formatter Logger) {
 	defaultFormatter = formatter
 }
 

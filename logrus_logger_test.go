@@ -36,7 +36,7 @@ func TestLogrusFormatter_Log(t *testing.T) {
 	err := E("initial error", SeverityWarning)
 	secondErr := E("second error", err, SeverityError)
 
-	formatter := LogrusFormatter{}
+	formatter := LogrusLogger{}
 	formatter.Log(secondErr)
 
 	var output TestOutput

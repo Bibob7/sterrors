@@ -4,9 +4,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type LogrusFormatter struct{}
+type LogrusLogger struct{}
 
-func (f *LogrusFormatter) Log(err error) {
+func (f *LogrusLogger) Log(err error) {
 	e, ok := err.(Error)
 	if !ok {
 		logrus.Error(err)
