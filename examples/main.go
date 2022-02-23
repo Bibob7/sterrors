@@ -1,19 +1,18 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/Bibob7/sterrors"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 	err := anotherMethod()
 
 	// second error that results from the first one
 	secondErr := sterrors.E("action not possible", sterrors.SeverityError, err)
 
-	jsonStackTrace, _ := json.Marshal(sterrors.CallStack(secondErr))
-	fmt.Printf("%s", jsonStackTrace)
+	sterrors.Log(secondErr)
 }
 
 func anotherMethod() error {
