@@ -75,6 +75,10 @@ func TestLogrusLogger_LogHighestSeverities(t *testing.T) {
 		HighestSeverity Severity
 		LogrusLevel     string
 	}{
+		"Severity Unknown": {
+			HighestSeverity: 0,
+			LogrusLevel:     "error",
+		},
 		"Severity Error": {
 			HighestSeverity: SeverityError,
 			LogrusLevel:     "error",
@@ -104,10 +108,15 @@ func TestLogrusLogger_LogHighestSeverities(t *testing.T) {
 			logrus.SetFormatter(&logrus.JSONFormatter{})
 			logrus.SetLevel(logrus.DebugLevel)
 
-			secondErr := E("second error", tc.HighestSeverity)
+			var err error
+			if tc.HighestSeverity == 0 {
+				err = fmt.Errorf("initial error")
+			} else {
+				err = E("initial error", tc.HighestSeverity)
+			}
 
 			formatter := LogrusLogger{}
-			formatter.Log(secondErr)
+			formatter.Log(err)
 
 			fmt.Println(string(outputWriter.Content))
 			var output TestOutput
