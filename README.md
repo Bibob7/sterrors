@@ -55,7 +55,7 @@ Output:
     "msg": "action not possible",
     "caller": {
       "funcName": "main.main",
-      "file": "/Users/kevin/Repositories/sterrors/examples/main.go",
+      "file": "/Users/root/Repositories/sterrors/examples/main.go",
       "line": 13
     }
   },
@@ -63,11 +63,67 @@ Output:
     "msg": "some error message",
     "caller": {
       "funcName": "main.anotherMethod",
-      "file": "/Users/kevin/Repositories/sterrors/examples/main.go",
+      "file": "/Users/root/Repositories/sterrors/examples/main.go",
       "line": 20
     }
   }
 ]
+```
+
+If you want to use logrus logger you can do it like that:
+
+```go
+package main
+
+import (
+	"github.com/Bibob7/sterrors"
+	"github.com/sirupsen/logrus"
+)
+
+func main() {
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+	sterrors.SetLogger(&sterrors.LogrusLogger{}) // this is not necessary, because LogrusLogger is the default logger
+	err := anotherMethod()
+
+	// second error that results from the first one
+	secondErr := sterrors.E("action not possible", sterrors.SeverityError, err)
+
+	sterrors.Log(secondErr)
+}
+
+func anotherMethod() error {
+	return sterrors.E("some error message", sterrors.SeverityWarning)
+}
+```
+
+Output:
+
+```json
+{
+  "level": "error",
+  "msg": "main.main: action not possible",
+  "stack": [
+    {
+      "msg": "action not possible",
+      "severity": "error",
+      "caller": {
+        "funcName": "main.main",
+        "file": "/Users/root/Repositories/sterrors/examples/main.go",
+        "line": 14
+      }
+    },
+    {
+      "msg": "some error message",
+      "severity": "warning",
+      "caller": {
+        "funcName": "main.anotherMethod",
+        "file": "/Users/root/Repositories/sterrors/examples/main.go",
+        "line": 20
+      }
+    }
+  ],
+  "time": "2022-02-23T22:18:11+01:00"
+}
 ```
 
 Inspired by a talk from GopherCon 2019: https://www.youtube.com/watch?v=4WIhhzTTd0Y

@@ -6,7 +6,7 @@ type Logger interface {
 	Log(err error)
 }
 
-func SetFormatter(formatter Logger) {
+func SetLogger(formatter Logger) {
 	defaultFormatter = formatter
 }
 

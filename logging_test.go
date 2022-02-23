@@ -15,14 +15,14 @@ func (t *TestLogFormatter) Log(err error) {
 
 func TestSetFormatter(t *testing.T) {
 	formatter := &TestLogFormatter{}
-	SetFormatter(formatter)
+	SetLogger(formatter)
 
 	assert.Equal(t, formatter, defaultFormatter)
 }
 
 func TestLog(t *testing.T) {
 	formatter := &TestLogFormatter{}
-	SetFormatter(formatter)
+	SetLogger(formatter)
 
 	err := E("initial err")
 
