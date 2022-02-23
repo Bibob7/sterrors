@@ -29,42 +29,66 @@ type TestCallStackEntry struct {
 }
 
 func TestLogrusFormatter_Log(t *testing.T) {
-	outputWriter := &TestWriter{}
-	logrus.SetOutput(outputWriter)
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-
-	err := E("initial error", SeverityWarning)
-	secondErr := E("second error", err, SeverityError)
-
-	formatter := LogrusLogger{}
-	formatter.Log(secondErr)
-
-	var output TestOutput
-	unmarshalErr := json.Unmarshal(outputWriter.Content, &output)
-
-	e := err.(Error)
-	secondE := secondErr.(Error)
-
-	assert.Nil(t, unmarshalErr)
-	assert.Equal(t, "sterrors.TestLogrusFormatter_Log: second error", output.Msg)
-	assert.Equal(t, "error", output.Level)
-	assert.Len(t, output.CallStack, 2)
-	assert.Equal(t, TestCallStackEntry{
-		ErrMessage: "second error",
-		Severity:   "error",
-		Caller: Caller{
-			FuncName: secondE.Caller().FuncName,
-			File:     secondE.Caller().File,
-			Line:     secondE.Caller().Line,
+	testCases := map[string]struct {
+		FinalLogLevel Severity
+	}{
+		"Severity Error": {
+			FinalLogLevel: SeverityError,
 		},
-	}, output.CallStack[0])
-	assert.Equal(t, TestCallStackEntry{
-		ErrMessage: "initial error",
-		Severity:   "warning",
-		Caller: Caller{
-			FuncName: e.Caller().FuncName,
-			File:     e.Caller().File,
-			Line:     e.Caller().Line,
+		"Severity Warning": {
+			FinalLogLevel: SeverityWarning,
 		},
-	}, output.CallStack[1])
+		"Severity Notice": {
+			FinalLogLevel: SeverityNotice,
+		},
+		"Severity Info": {
+			FinalLogLevel: SeverityInfo,
+		},
+		"Severity Debug": {
+			FinalLogLevel: SeverityDebug,
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			outputWriter := &TestWriter{}
+			logrus.SetOutput(outputWriter)
+			logrus.SetFormatter(&logrus.JSONFormatter{})
+
+			err := E("initial error", SeverityWarning)
+			secondErr := E("second error", err, tc.FinalLogLevel)
+
+			formatter := LogrusLogger{}
+			formatter.Log(secondErr)
+
+			var output TestOutput
+			unmarshalErr := json.Unmarshal(outputWriter.Content, &output)
+
+			e := err.(Error)
+			secondE := secondErr.(Error)
+
+			assert.Nil(t, unmarshalErr)
+			assert.Equal(t, "sterrors.TestLogrusFormatter_Log.func1: second error", output.Msg)
+			assert.Equal(t, HighestSeverity(secondE).String(), output.Level)
+			assert.Len(t, output.CallStack, 2)
+			assert.Equal(t, TestCallStackEntry{
+				ErrMessage: "second error",
+				Severity:   secondE.Severity().String(),
+				Caller: Caller{
+					FuncName: secondE.Caller().FuncName,
+					File:     secondE.Caller().File,
+					Line:     secondE.Caller().Line,
+				},
+			}, output.CallStack[0])
+			assert.Equal(t, TestCallStackEntry{
+				ErrMessage: "initial error",
+				Severity:   e.Severity().String(),
+				Caller: Caller{
+					FuncName: e.Caller().FuncName,
+					File:     e.Caller().File,
+					Line:     e.Caller().Line,
+				},
+			}, output.CallStack[1])
+		})
+	}
 }
