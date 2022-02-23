@@ -41,6 +41,10 @@ func TestLogrusFormatter_Log(t *testing.T) {
 
 	var output TestOutput
 	unmarshalErr := json.Unmarshal(outputWriter.Content, &output)
+
+	e := err.(Error)
+	secondE := secondErr.(Error)
+
 	assert.Nil(t, unmarshalErr)
 	assert.Equal(t, "sterrors.TestLogrusFormatter_Log: second error", output.Msg)
 	assert.Equal(t, "error", output.Level)
@@ -49,18 +53,18 @@ func TestLogrusFormatter_Log(t *testing.T) {
 		ErrMessage: "second error",
 		Severity:   "error",
 		Caller: Caller{
-			FuncName: "sterrors.TestLogrusFormatter_Log",
-			File:     "/Users/kevin/Repositories/sterrors/logrus_formatter_test.go",
-			Line:     37,
+			FuncName: secondE.Caller().FuncName,
+			File:     secondE.Caller().File,
+			Line:     secondE.Caller().Line,
 		},
 	}, output.CallStack[0])
 	assert.Equal(t, TestCallStackEntry{
 		ErrMessage: "initial error",
 		Severity:   "warning",
 		Caller: Caller{
-			FuncName: "sterrors.TestLogrusFormatter_Log",
-			File:     "/Users/kevin/Repositories/sterrors/logrus_formatter_test.go",
-			Line:     36,
+			FuncName: e.Caller().FuncName,
+			File:     e.Caller().File,
+			Line:     e.Caller().Line,
 		},
 	}, output.CallStack[1])
 }
