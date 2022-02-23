@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestLevel(t *testing.T) {
+func TestHighestLevel(t *testing.T) {
 	testCases := map[string]struct {
 		ExpectedSeverity         Severity
 		ActualSeverityOccurrence []Severity
@@ -50,6 +50,40 @@ func TestLevel(t *testing.T) {
 			}
 
 			assert.Equal(t, tc.ExpectedSeverity, HighestSeverity(lastErr))
+		})
+	}
+}
+
+func TestSeverity_String(t *testing.T) {
+	testCases := map[string]struct {
+		Severity       Severity
+		ExpectedString string
+	}{
+		"Expected Severity Error": {
+			Severity:       SeverityError,
+			ExpectedString: "error",
+		},
+		"Expected Severity Info": {
+			Severity:       SeverityInfo,
+			ExpectedString: "info",
+		},
+		"Expected Severity Warning": {
+			Severity:       SeverityWarning,
+			ExpectedString: "warning",
+		},
+		"Expected Severity Notice": {
+			Severity:       SeverityNotice,
+			ExpectedString: "notice",
+		},
+		"Expected Severity Debug": {
+			Severity:       SeverityDebug,
+			ExpectedString: "debug",
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			assert.Equal(t, tc.ExpectedString, tc.Severity.String())
 		})
 	}
 }
