@@ -16,19 +16,6 @@ type BaseError struct {
 	cause    error
 }
 
-type Caller struct {
-	FuncName string `json:"funcName,omitempty"`
-	File     string `json:"file,omitempty"`
-	Line     int    `json:"line,omitempty"`
-}
-
-type CallStackEntry struct {
-	ErrMessage string `json:"msg,omitempty"`
-	Caller     Caller `json:"caller,omitempty"`
-}
-
-type Severity int
-
 func (e *BaseError) Error() string {
 	return e.message
 }

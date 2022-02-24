@@ -7,15 +7,15 @@ import (
 )
 
 func main() {
-	err := anotherMethod()
+	err := secondMethod()
 
 	// second error that results from the first one
-	secondErr := sterrors.E("action not possible", sterrors.SeverityError, err)
+	second := sterrors.E("action not possible", sterrors.SeverityError, err)
 
-	jsonStackTrace, _ := json.Marshal(sterrors.CallStack(secondErr))
+	jsonStackTrace, _ := json.Marshal(sterrors.CallStack(second))
 	fmt.Printf("%s", jsonStackTrace)
 }
 
-func anotherMethod() error {
+func secondMethod() error {
 	return sterrors.E("some error message", sterrors.SeverityWarning)
 }

@@ -1,10 +1,5 @@
 package sterrors
 
-import (
-	"runtime"
-	"strings"
-)
-
 var (
 	createError CreateFunc = func() Error {
 		return &BaseError{}
@@ -25,15 +20,4 @@ func E(args ...interface{}) error {
 	e.setCaller(caller())
 	e.enrich(args...)
 	return e
-}
-
-func caller() Caller {
-	pc, file, line, _ := runtime.Caller(2)
-	details := runtime.FuncForPC(pc)
-	nameSegments := strings.Split(details.Name(), "/")
-	funcName := details.Name()
-	if len(nameSegments) > 0 {
-		funcName = nameSegments[len(nameSegments)-1]
-	}
-	return Caller{File: file, Line: line, FuncName: funcName}
 }
