@@ -12,7 +12,7 @@ func TestBaseError_Enrich(t *testing.T) {
 	severity := SeverityInfo
 
 	e := BaseError{}
-	e.enrich(message, cause, severity)
+	e.Enrich(message, cause, severity)
 
 	assert.Equal(t, e.message, message)
 	assert.Equal(t, e.severity, severity)

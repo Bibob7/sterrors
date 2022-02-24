@@ -18,6 +18,6 @@ func SetDefaultCreateErrorFunc(customCreateErrorFunc CreateFunc) {
 func E(args ...interface{}) error {
 	e := createError()
 	e.setCaller(caller())
-	e.enrich(args...)
+	e.Enrich(args...)
 	return e
 }

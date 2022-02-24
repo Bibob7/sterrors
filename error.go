@@ -5,7 +5,7 @@ type Error interface {
 	Cause() error
 	Severity() Severity
 	Caller() Caller
-	enrich(args ...interface{})
+	Enrich(args ...interface{})
 	setCaller(caller Caller)
 }
 
@@ -51,10 +51,10 @@ func (e *CustomErrorType) Enrich(args ...interface{}) {
 			e.CustomAttribute = arg
 		}
 	}
-	e.BaseError.enrich(args...)
+	e.BaseError.Enrich(args...)
 }
 */
-func (e *BaseError) enrich(args ...interface{}) {
+func (e *BaseError) Enrich(args ...interface{}) {
 	for _, arg := range args {
 		switch arg := arg.(type) {
 		case error:

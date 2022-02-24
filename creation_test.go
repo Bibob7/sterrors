@@ -13,14 +13,14 @@ type CustomErrorType struct {
 
 type CustomAttribute int
 
-func (e *CustomErrorType) enrich(args ...interface{}) {
+func (e *CustomErrorType) Enrich(args ...interface{}) {
 	for _, arg := range args {
 		switch arg := arg.(type) {
 		case CustomAttribute:
 			e.CustomAttribute = arg
 		}
 	}
-	e.BaseError.enrich(args...)
+	e.BaseError.Enrich(args...)
 }
 
 func TestE(t *testing.T) {
