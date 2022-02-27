@@ -5,11 +5,11 @@ import "encoding/json"
 type Severity int
 
 const (
-	SeverityNotice  Severity = 1
-	SeverityDebug   Severity = 2
-	SeverityInfo    Severity = 3
-	SeverityWarning Severity = 4
-	SeverityError   Severity = 5
+	SeverityNotice Severity = iota
+	SeverityDebug
+	SeverityInfo
+	SeverityWarning
+	SeverityError
 )
 
 func (s Severity) MarshalJSON() ([]byte, error) {

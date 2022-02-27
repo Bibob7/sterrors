@@ -1,14 +1,14 @@
 package sterrors
 
-type Kind int
+type Kind string
 
 // Predefined kinds
 const (
-	KindUnexpected    Kind = 0
-	KindInvalidInput  Kind = 1
-	KindNotAllowed    Kind = 2
-	KindAlreadyExists Kind = 3
-	KindNotFound      Kind = 4
+	KindUnexpected    Kind = "unexpected"
+	KindInvalidInput  Kind = "invalid input"
+	KindNotAllowed    Kind = "not allowed"
+	KindAlreadyExists Kind = "already exists"
+	KindNotFound      Kind = "not found"
 )
 
 func Is(err error, kind Kind) bool {

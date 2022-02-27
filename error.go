@@ -19,7 +19,10 @@ type BaseError struct {
 }
 
 func (e *BaseError) Error() string {
-	return e.message
+	if e.message != "" {
+		return e.message
+	}
+	return string(e.kind)
 }
 
 func (e *BaseError) Cause() error {
