@@ -8,67 +8,98 @@ import (
 
 func TestIs(t *testing.T) {
 	testCases := map[string]struct {
-		IsUnknownErrorType bool
-		IsKind             Kind
-		CheckKind          Kind
-		Result             bool
+		Error     error
+		CheckKind Kind
+		Result    bool
 	}{
 		"Is unknown error type": {
-			IsUnknownErrorType: true,
-			CheckKind:          KindUnexpected,
-			Result:             true,
+			Error:     errors.New("unknown error"),
+			CheckKind: KindUnexpected,
+			Result:    true,
+		},
+		"Error is nil": {
+			Error:     nil,
+			CheckKind: KindAlreadyExists,
+			Result:    false,
 		},
 		"Is unexpected": {
-			IsKind:    KindUnexpected,
+			Error:     E(KindUnexpected),
 			CheckKind: KindUnexpected,
 			Result:    true,
 		},
 		"Is not unexpected": {
-			IsKind:    KindNotFound,
+			Error:     E(KindNotFound),
 			CheckKind: KindUnexpected,
 			Result:    false,
 		},
 		"Is not found": {
-			IsKind:    KindNotFound,
+			Error:     E(KindNotFound),
 			CheckKind: KindNotFound,
 			Result:    true,
 		},
 		"Is not not found": {
-			IsKind:    KindInvalidInput,
+			Error:     E(KindInvalidInput),
 			CheckKind: KindNotFound,
 			Result:    false,
 		},
 		"Is not allowed": {
-			IsKind:    KindNotAllowed,
+			Error:     E(KindNotAllowed),
 			CheckKind: KindNotAllowed,
 			Result:    true,
 		},
 		"Is not not allowed": {
-			IsKind:    KindAlreadyExists,
+			Error:     E(KindAlreadyExists),
 			CheckKind: KindNotAllowed,
 			Result:    false,
 		},
 		"Is already exists": {
-			IsKind:    KindAlreadyExists,
+			Error:     E(KindAlreadyExists),
 			CheckKind: KindAlreadyExists,
 			Result:    true,
 		},
 		"Is not already exists": {
-			IsKind:    KindUnexpected,
+			Error:     E(KindUnexpected),
 			CheckKind: KindAlreadyExists,
 			Result:    false,
 		},
 	}
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			var err error
-			if tc.IsUnknownErrorType {
-				err = errors.New("unknown error")
-			} else {
-				err = E(tc.IsKind)
-			}
+			assert.Equal(t, tc.Result, Is(tc.Error, tc.CheckKind))
+		})
+	}
+}
 
-			assert.Equal(t, tc.Result, Is(err, tc.CheckKind))
+func TestIsInStack(t *testing.T) {
+	testCases := map[string]struct {
+		Error     error
+		CheckKind Kind
+		Result    bool
+	}{
+		"Is unknown error type": {
+			Error:     errors.New("unknown error"),
+			CheckKind: KindUnexpected,
+			Result:    true,
+		},
+		"Error is nil": {
+			Error:     nil,
+			CheckKind: KindAlreadyExists,
+			Result:    false,
+		},
+		"Kind in stack": {
+			Error:     E(KindNotAllowed, E(KindNotFound)),
+			CheckKind: KindNotFound,
+			Result:    true,
+		},
+		"Kind not in stack": {
+			Error:     E(KindNotAllowed, E(KindNotFound)),
+			CheckKind: KindInvalidInput,
+			Result:    false,
+		},
+	}
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			assert.Equal(t, tc.Result, IsInStack(tc.Error, tc.CheckKind))
 		})
 	}
 }
