@@ -25,9 +25,10 @@ func TestCallStack(t *testing.T) {
 	assert.Equal(t, "second error", callStack[1].ErrMessage)
 	assert.Equal(t, "initial error", callStack[2].ErrMessage)
 
+	var nilCaller *Caller
 	assert.Equal(t, thirdCall, callStack[0].Caller)
 	assert.Equal(t, secondCall, callStack[1].Caller)
-	assert.Equal(t, Caller{}, callStack[2].Caller)
+	assert.Equal(t, nilCaller, callStack[2].Caller)
 }
 
 func TestCallStack_WithNotTraceableErr(t *testing.T) {
