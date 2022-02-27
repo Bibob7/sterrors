@@ -22,7 +22,7 @@ func (e *BaseError) Error() string {
 	if e.message != "" {
 		return e.message
 	}
-	return string(e.kind)
+	return string(e.Kind())
 }
 
 func (e *BaseError) Cause() error {
@@ -34,6 +34,9 @@ func (e *BaseError) Severity() Severity {
 }
 
 func (e *BaseError) Kind() Kind {
+	if e.kind == "" {
+		return KindUnexpected
+	}
 	return e.kind
 }
 
