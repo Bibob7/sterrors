@@ -4,6 +4,7 @@ type Error interface {
 	error
 	Cause() error
 	Severity() Severity
+	Kind() Kind
 	Caller() *Caller
 	Enrich(args ...interface{})
 	setCaller(caller *Caller)
@@ -11,13 +12,17 @@ type Error interface {
 
 type BaseError struct {
 	message  string
+	kind     Kind
 	caller   *Caller
 	severity Severity
 	cause    error
 }
 
 func (e *BaseError) Error() string {
-	return e.message
+	if e.message != "" {
+		return e.message
+	}
+	return string(e.Kind())
 }
 
 func (e *BaseError) Cause() error {
@@ -26,6 +31,13 @@ func (e *BaseError) Cause() error {
 
 func (e *BaseError) Severity() Severity {
 	return e.severity
+}
+
+func (e *BaseError) Kind() Kind {
+	if e.kind == "" {
+		return KindUnexpected
+	}
+	return e.kind
 }
 
 func (e *BaseError) Caller() *Caller {
@@ -61,6 +73,8 @@ func (e *BaseError) Enrich(args ...interface{}) {
 			e.cause = arg
 		case Severity:
 			e.severity = arg
+		case Kind:
+			e.kind = arg
 		case string:
 			e.message = arg
 		default:

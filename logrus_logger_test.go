@@ -76,7 +76,7 @@ func TestLogrusLogger_LogHighestSeverities(t *testing.T) {
 		LogrusLevel     string
 	}{
 		"Severity Unknown": {
-			HighestSeverity: 0,
+			HighestSeverity: -1,
 			LogrusLevel:     "error",
 		},
 		"Severity Error": {
@@ -109,7 +109,7 @@ func TestLogrusLogger_LogHighestSeverities(t *testing.T) {
 			logrus.SetLevel(logrus.DebugLevel)
 
 			var err error
-			if tc.HighestSeverity == 0 {
+			if tc.HighestSeverity == -1 {
 				err = fmt.Errorf("initial error")
 			} else {
 				err = E("initial error", tc.HighestSeverity)
