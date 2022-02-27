@@ -17,7 +17,7 @@ func TestSetFormatter(t *testing.T) {
 	formatter := &TestLogFormatter{}
 	SetLogger(formatter)
 
-	assert.Equal(t, formatter, defaultFormatter)
+	assert.Equal(t, formatter, defaultLogger)
 }
 
 func TestLog(t *testing.T) {

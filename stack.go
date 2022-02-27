@@ -14,7 +14,7 @@ type Caller struct {
 type CallStackEntry struct {
 	ErrMessage string   `json:"msg,omitempty"`
 	Severity   Severity `json:"severity,omitempty"`
-	Caller     Caller   `json:"caller,omitempty"`
+	Caller     *Caller  `json:"caller,omitempty"`
 }
 
 // CallStack returns the callstack
@@ -42,7 +42,7 @@ func CallStack(err error) []CallStackEntry {
 	return res
 }
 
-func caller() Caller {
+func caller() *Caller {
 	pc, file, line, _ := runtime.Caller(2)
 	details := runtime.FuncForPC(pc)
 	nameSegments := strings.Split(details.Name(), "/")
@@ -50,5 +50,5 @@ func caller() Caller {
 	if len(nameSegments) > 0 {
 		funcName = nameSegments[len(nameSegments)-1]
 	}
-	return Caller{File: file, Line: line, FuncName: funcName}
+	return &Caller{File: file, Line: line, FuncName: funcName}
 }
