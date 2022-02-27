@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func callFake() Caller {
+func callFake() *Caller {
 	return caller()
 }
 
