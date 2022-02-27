@@ -4,14 +4,14 @@ type Error interface {
 	error
 	Cause() error
 	Severity() Severity
-	Caller() Caller
+	Caller() *Caller
 	Enrich(args ...interface{})
-	setCaller(caller Caller)
+	setCaller(caller *Caller)
 }
 
 type BaseError struct {
 	message  string
-	caller   Caller
+	caller   *Caller
 	severity Severity
 	cause    error
 }
@@ -28,7 +28,7 @@ func (e *BaseError) Severity() Severity {
 	return e.severity
 }
 
-func (e *BaseError) Caller() Caller {
+func (e *BaseError) Caller() *Caller {
 	return e.caller
 }
 
@@ -70,6 +70,6 @@ func (e *BaseError) Enrich(args ...interface{}) {
 }
 
 // setCaller is used during the creation to set the caller
-func (e *BaseError) setCaller(caller Caller) {
+func (e *BaseError) setCaller(caller *Caller) {
 	e.caller = caller
 }
