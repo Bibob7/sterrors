@@ -1,15 +1,17 @@
 package sterrors
 
-var defaultLogger Logger = &DefaultLogger{}
+import "log"
+
+var logger = NewDefaultLogger(&log.Logger{})
 
 type Logger interface {
 	Log(err error)
 }
 
-func SetLogger(logger Logger) {
-	defaultLogger = logger
+func SetLogger(setLogger Logger) {
+	logger = setLogger
 }
 
 func Log(err error) {
-	defaultLogger.Log(err)
+	logger.Log(err)
 }

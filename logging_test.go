@@ -1,28 +1,29 @@
 package sterrors
 
 import (
+	"reflect"
 	"testing"
 )
 
-type TestLogFormatter struct {
+type TestCustomLogger struct {
 	ExpectedErr error
 }
 
-func (t *TestLogFormatter) Log(err error) {
+func (t *TestCustomLogger) Log(err error) {
 	t.ExpectedErr = err
 }
 
 func TestSetFormatter(t *testing.T) {
-	formatter := &TestLogFormatter{}
-	SetLogger(formatter)
+	customLogger := &TestCustomLogger{}
+	SetLogger(customLogger)
 
-	if formatter != defaultLogger {
-		t.Errorf("formatter is not equal to defailt formatter")
+	if !reflect.DeepEqual(customLogger, logger) {
+		t.Errorf("customLogger is not equal to the set logger")
 	}
 }
 
 func TestLog(t *testing.T) {
-	formatter := &TestLogFormatter{}
+	formatter := &TestCustomLogger{}
 	SetLogger(formatter)
 
 	err := E("initial err")

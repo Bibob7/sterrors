@@ -4,8 +4,16 @@ import (
 	"log"
 )
 
-type DefaultLogger struct{}
+type defaultLogger struct {
+	logger *log.Logger
+}
 
-func (f *DefaultLogger) Log(err error) {
+func NewDefaultLogger(logger *log.Logger) Logger {
+	return &defaultLogger{
+		logger: logger,
+	}
+}
+
+func (f *defaultLogger) Log(err error) {
 	log.Printf("%v", err)
 }
