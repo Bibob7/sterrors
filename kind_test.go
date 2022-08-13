@@ -2,7 +2,6 @@ package sterrors
 
 import (
 	"errors"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -65,7 +64,10 @@ func TestIs(t *testing.T) {
 	}
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			assert.Equal(t, tc.Result, Is(tc.Error, tc.CheckKind))
+			inStack := IsInStack(tc.Error, tc.CheckKind)
+			if tc.Result != inStack {
+				t.Errorf("expected value of IsInStack is not equal with actual value: %v", inStack)
+			}
 		})
 	}
 }
@@ -99,7 +101,10 @@ func TestIsInStack(t *testing.T) {
 	}
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			assert.Equal(t, tc.Result, IsInStack(tc.Error, tc.CheckKind))
+			inStack := IsInStack(tc.Error, tc.CheckKind)
+			if tc.Result != inStack {
+				t.Errorf("expected value of IsInStack is not equal with actual value: %v", inStack)
+			}
 		})
 	}
 }

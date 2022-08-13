@@ -2,7 +2,6 @@ package sterrors
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -11,12 +10,18 @@ func TestBaseError_Enrich(t *testing.T) {
 	cause := fmt.Errorf("initial error")
 	severity := SeverityInfo
 
-	e := BaseError{}
-	e.Enrich(message, cause, severity)
+	err := BaseError{}
+	err.Enrich(message, cause, severity)
 
-	assert.Equal(t, e.message, message)
-	assert.Equal(t, e.severity, severity)
-	assert.Equal(t, e.cause, cause)
+	if err.message != message {
+		t.Errorf("error message is not equal")
+	}
+	if err.cause != cause {
+		t.Errorf("error cause is not cause")
+	}
+	if err.severity != severity {
+		t.Errorf("error cause is not cause")
+	}
 }
 
 func TestBaseError_Error(t *testing.T) {
@@ -35,7 +40,9 @@ func TestBaseError_Error(t *testing.T) {
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
 			err := E(tc.Message)
-			assert.Equal(t, tc.ExpectedErrorMessage, err.Error())
+			if tc.ExpectedErrorMessage != err.Error() {
+				t.Errorf("expected error message is not actual error message")
+			}
 		})
 	}
 }

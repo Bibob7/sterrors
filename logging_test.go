@@ -1,7 +1,6 @@
 package sterrors
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -17,7 +16,9 @@ func TestSetFormatter(t *testing.T) {
 	formatter := &TestLogFormatter{}
 	SetLogger(formatter)
 
-	assert.Equal(t, formatter, defaultLogger)
+	if formatter != defaultLogger {
+		t.Errorf("formatter is not equal to defailt formatter")
+	}
 }
 
 func TestLog(t *testing.T) {
@@ -28,5 +29,7 @@ func TestLog(t *testing.T) {
 
 	Log(err)
 
-	assert.Equal(t, formatter.ExpectedErr, err)
+	if formatter.ExpectedErr != err {
+		t.Errorf("expected err: %s is not actual err: %s", formatter.ExpectedErr, err)
+	}
 }

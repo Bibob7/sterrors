@@ -2,7 +2,7 @@ package sterrors
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
+	"reflect"
 	"testing"
 )
 
@@ -20,15 +20,29 @@ func TestCallStack(t *testing.T) {
 
 	callStack := CallStack(thirdErr)
 
-	assert.Len(t, callStack, 3)
-	assert.Equal(t, "third error", callStack[0].ErrMessage)
-	assert.Equal(t, "second error", callStack[1].ErrMessage)
-	assert.Equal(t, "initial error", callStack[2].ErrMessage)
+	if len(callStack) != 3 {
+		t.Errorf("callstack has not lenth 3")
+	}
+	if "third error" != callStack[0].ErrMessage {
+		t.Errorf("third callstack error message is not equal to third error")
+	}
+	if "second error" != callStack[1].ErrMessage {
+		t.Errorf("second callstack error message is not equal to second error")
+	}
+	if "initial error" != callStack[2].ErrMessage {
+		t.Errorf("first callstack error message is not equal to initial error")
+	}
 
 	var nilCaller *Caller
-	assert.Equal(t, thirdCall, callStack[0].Caller)
-	assert.Equal(t, secondCall, callStack[1].Caller)
-	assert.Equal(t, nilCaller, callStack[2].Caller)
+	if !reflect.DeepEqual(thirdCall, callStack[0].Caller) {
+		t.Errorf("third caller is not equal to actual first caller")
+	}
+	if !reflect.DeepEqual(secondCall, callStack[1].Caller) {
+		t.Errorf("second caller is not equal to actual second caller")
+	}
+	if !reflect.DeepEqual(nilCaller, callStack[2].Caller) {
+		t.Errorf("first caller is not equal to nilCaller")
+	}
 }
 
 func TestCallStack_WithNotTraceableErr(t *testing.T) {
@@ -36,8 +50,12 @@ func TestCallStack_WithNotTraceableErr(t *testing.T) {
 
 	callStack := CallStack(err)
 
-	assert.Len(t, callStack, 1)
-	assert.Equal(t, "initial error", callStack[0].ErrMessage)
+	if len(callStack) != 1 {
+		t.Errorf("callstack has not lenth 1")
+	}
+	if "initial error" != callStack[0].ErrMessage {
+		t.Errorf("first callstack error message is not equal to initial error")
+	}
 }
 
 func TestCallStack_WithErrWithoutCause(t *testing.T) {
@@ -45,12 +63,18 @@ func TestCallStack_WithErrWithoutCause(t *testing.T) {
 
 	callStack := CallStack(err)
 
-	assert.Len(t, callStack, 1)
-	assert.Equal(t, "initial error", callStack[0].ErrMessage)
+	if len(callStack) != 1 {
+		t.Errorf("callstack has not lenth 1")
+	}
+	if "initial error" != callStack[0].ErrMessage {
+		t.Errorf("first callstack error message is not equal to initial error")
+	}
 }
 
 func TestCallStack_WithNil(t *testing.T) {
 	callStack := CallStack(nil)
 
-	assert.Len(t, callStack, 0)
+	if len(callStack) != 0 {
+		t.Errorf("callstack has not lenth 0")
+	}
 }

@@ -1,6 +1,6 @@
 package sterrors
 
-var defaultLogger Logger = &LogrusLogger{}
+var defaultLogger Logger = &DefaultLogger{}
 
 type Logger interface {
 	Log(err error)

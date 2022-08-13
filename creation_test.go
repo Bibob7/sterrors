@@ -2,7 +2,7 @@ package sterrors
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
+	"reflect"
 	"testing"
 )
 
@@ -25,17 +25,25 @@ func (e *CustomErrorType) Enrich(args ...interface{}) {
 
 func TestE(t *testing.T) {
 	message := "Error message"
-	err := fmt.Errorf("error Cause")
+	cause := fmt.Errorf("error Cause")
 	severity := SeverityError
 
-	resultErr := E(message, err, severity)
+	resultErr := E(message, cause, severity)
 
-	assert.IsType(t, &BaseError{}, resultErr)
-	e := resultErr.(*BaseError)
+	if reflect.TypeOf(resultErr) != reflect.TypeOf(&BaseError{}) {
+		t.Errorf("error has no type BaseError")
+	}
+	err := resultErr.(*BaseError)
 
-	assert.Equal(t, e.message, message)
-	assert.Equal(t, e.cause, err)
-	assert.Equal(t, e.severity, severity)
+	if err.message != message {
+		t.Errorf("error message is not equal")
+	}
+	if err.cause != cause {
+		t.Errorf("error cause is not cause")
+	}
+	if err.severity != severity {
+		t.Errorf("error cause is not cause")
+	}
 }
 
 func TestEWithCustomErrorType(t *testing.T) {
@@ -65,13 +73,23 @@ func TestEWithCustomErrorType(t *testing.T) {
 			cause := E("Cause message", SeverityWarning)
 			resultErr := E(tc.Message, cause, tc.Severity, tc.CustomAttribute)
 
-			assert.IsType(t, &CustomErrorType{}, resultErr)
+			if reflect.TypeOf(resultErr) != reflect.TypeOf(&CustomErrorType{}) {
+				t.Errorf("error has no type CustomErrorType")
+			}
 			e := resultErr.(*CustomErrorType)
 
-			assert.Equal(t, e.message, tc.Message)
-			assert.Equal(t, e.cause, cause)
-			assert.Equal(t, e.severity, tc.Severity)
-			assert.Equal(t, e.CustomAttribute, tc.CustomAttribute)
+			if e.message != tc.Message {
+				t.Errorf("error message is not equal")
+			}
+			if e.cause != cause {
+				t.Errorf("error cause is not cause")
+			}
+			if e.severity != tc.Severity {
+				t.Errorf("error cause is not cause")
+			}
+			if e.CustomAttribute != tc.CustomAttribute {
+				t.Errorf("error cause is not cause")
+			}
 		})
 	}
 }
