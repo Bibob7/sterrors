@@ -1,32 +1,36 @@
 package sterrors
 
 import (
-	"github.com/stretchr/testify/assert"
+	"reflect"
 	"testing"
 )
 
-type TestLogFormatter struct {
+type TestCustomLogger struct {
 	ExpectedErr error
 }
 
-func (t *TestLogFormatter) Log(err error) {
+func (t *TestCustomLogger) Log(err error) {
 	t.ExpectedErr = err
 }
 
 func TestSetFormatter(t *testing.T) {
-	formatter := &TestLogFormatter{}
-	SetLogger(formatter)
+	customLogger := &TestCustomLogger{}
+	SetLogger(customLogger)
 
-	assert.Equal(t, formatter, defaultLogger)
+	if !reflect.DeepEqual(customLogger, logger) {
+		t.Errorf("customLogger is not equal to the set logger")
+	}
 }
 
 func TestLog(t *testing.T) {
-	formatter := &TestLogFormatter{}
+	formatter := &TestCustomLogger{}
 	SetLogger(formatter)
 
 	err := E("initial err")
 
 	Log(err)
 
-	assert.Equal(t, formatter.ExpectedErr, err)
+	if formatter.ExpectedErr != err {
+		t.Errorf("expected err: %s is not actual err: %s", formatter.ExpectedErr, err)
+	}
 }

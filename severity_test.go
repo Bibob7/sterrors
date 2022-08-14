@@ -1,8 +1,8 @@
 package sterrors
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -49,7 +49,10 @@ func TestHighestLevel(t *testing.T) {
 				}
 			}
 
-			assert.Equal(t, tc.ExpectedSeverity, HighestSeverity(lastErr))
+			highestSeverity := HighestSeverity(lastErr)
+			if tc.ExpectedSeverity != highestSeverity {
+				t.Errorf("exptected severity %s is not actual severity %s", tc.ExpectedSeverity, highestSeverity)
+			}
 		})
 	}
 }
@@ -83,7 +86,24 @@ func TestSeverity_String(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			assert.Equal(t, tc.ExpectedString, tc.Severity.String())
+			if tc.ExpectedString != tc.Severity.String() {
+				t.Errorf("exptected severity string %s is not actual severity string %s", tc.ExpectedString, tc.Severity.String())
+			}
 		})
+	}
+}
+
+func TestSeverity_MarshalJSON(t *testing.T) {
+	severity := SeverityError
+	severityJson, err := json.Marshal(severity)
+
+	if err != nil {
+		t.Errorf("unable to marshal: %v", err)
+	}
+
+	expectedJson := "\"error\""
+	actualJson := string(severityJson)
+	if actualJson != expectedJson {
+		t.Errorf("expected json \"%s\" is not actual json \"%s\"", expectedJson, actualJson)
 	}
 }
