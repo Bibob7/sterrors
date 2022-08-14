@@ -1,6 +1,7 @@
 package sterrors
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 )
@@ -89,5 +90,20 @@ func TestSeverity_String(t *testing.T) {
 				t.Errorf("exptected severity string %s is not actual severity string %s", tc.ExpectedString, tc.Severity.String())
 			}
 		})
+	}
+}
+
+func TestSeverity_MarshalJSON(t *testing.T) {
+	severity := SeverityError
+	severityJson, err := json.Marshal(severity)
+
+	if err != nil {
+		t.Errorf("unable to marshal: %v", err)
+	}
+
+	expectedJson := "\"error\""
+	actualJson := string(severityJson)
+	if actualJson != expectedJson {
+		t.Errorf("expected json \"%s\" is not actual json \"%s\"", expectedJson, actualJson)
 	}
 }
