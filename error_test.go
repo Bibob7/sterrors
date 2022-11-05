@@ -36,7 +36,7 @@ func TestBaseError_Error(t *testing.T) {
 			ExpectedErrorMessage: "custom error message",
 		},
 		"No custom error message": {
-			ExpectedErrorMessage: "unexpected",
+			ExpectedErrorMessage: "",
 		},
 		"With wrapped error": {
 			Message:              "some message",
@@ -56,9 +56,6 @@ func TestBaseError_Error(t *testing.T) {
 			stError, _ := err.(Error)
 			if tc.Message != "" && tc.Message != stError.Message() {
 				t.Errorf("expected message \"%s\" is not actual message \"%s\"", tc.Message, stError.Message())
-			}
-			if tc.Message == "" && stError.Message() != "unexpected" {
-				t.Errorf("empty message is not mapped to unexpected")
 			}
 		})
 	}
