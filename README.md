@@ -83,7 +83,9 @@ Output:
     }
   }
 ]
+```
 
+```
 Simply print the wrapped error message: action not possible: some error message
 Is initial error: true
 ```
