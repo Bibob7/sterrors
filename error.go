@@ -1,7 +1,10 @@
 package sterrors
 
+import "fmt"
+
 type Error interface {
 	error
+	Message() string
 	Cause() error
 	Severity() Severity
 	Kind() Kind
@@ -18,11 +21,19 @@ type BaseError struct {
 	cause    error
 }
 
-func (e *BaseError) Error() string {
+func (e *BaseError) Message() string {
+	message := string(e.Kind())
 	if e.message != "" {
-		return e.message
+		message = e.message
 	}
-	return string(e.Kind())
+	return message
+}
+
+func (e *BaseError) Error() string {
+	if e.cause != nil {
+		return fmt.Sprintf("%s: %s", e.Message(), e.cause.Error())
+	}
+	return e.Message()
 }
 
 func (e *BaseError) Cause() error {
@@ -49,22 +60,22 @@ Enrich can be overridden or extended by a custom error type
 
 For example:
 
-type CustomErrorType struct {
-	BaseError
-	CustomAttribute
-}
+	type CustomErrorType struct {
+		BaseError
+		CustomAttribute
+	}
 
 type CustomAttribute int
 
-func (e *CustomErrorType) Enrich(args ...interface{}) {
-	for _, arg := range args {
-		switch arg := arg.(type) {
-		case CustomAttribute:
-			e.CustomAttribute = arg
+	func (e *CustomErrorType) Enrich(args ...interface{}) {
+		for _, arg := range args {
+			switch arg := arg.(type) {
+			case CustomAttribute:
+				e.CustomAttribute = arg
+			}
 		}
+		e.BaseError.Enrich(args...)
 	}
-	e.BaseError.Enrich(args...)
-}
 */
 func (e *BaseError) Enrich(args ...interface{}) {
 	for _, arg := range args {
