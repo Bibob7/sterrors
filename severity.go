@@ -39,8 +39,8 @@ func HighestSeverity(err error) Severity {
 		return SeverityError
 	}
 
-	if e.Cause() != nil {
-		causeSeverity := HighestSeverity(e.Cause())
+	if e.Unwrap() != nil {
+		causeSeverity := HighestSeverity(e.Unwrap())
 		if causeSeverity > e.Severity() {
 			return causeSeverity
 		}
