@@ -5,6 +5,7 @@ import "fmt"
 type Error interface {
 	error
 	Message() string
+	Wrap(cause error) error
 	Unwrap() error
 	Severity() Severity
 	Caller() *Caller
@@ -77,6 +78,11 @@ func (e *BaseError) Enrich(args ...interface{}) {
 			// ignore unknown arg types
 		}
 	}
+}
+
+func (e *BaseError) Wrap(cause error) error {
+	e.cause = cause
+	return e
 }
 
 // setCaller is used during the creation to set the caller

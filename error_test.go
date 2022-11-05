@@ -60,3 +60,18 @@ func TestBaseError_Error(t *testing.T) {
 		})
 	}
 }
+
+func TestBaseError_Wrap(t *testing.T) {
+	err, _ := E().(Error)
+	if err.Unwrap() != nil {
+		t.Errorf("initial error already contains cause error")
+	}
+	wrappedMessage := "some other error, that should be wrapped"
+	err = err.Wrap(E(wrappedMessage)).(Error)
+	if err.Unwrap() == nil {
+		t.Errorf("error has no wrapped error")
+	}
+	if err.Unwrap().Error() != "some other error, that should be wrapped" {
+		t.Errorf("wrapped error has not the expected message \"%s\" instead it is \"%s\"", wrappedMessage, err.Unwrap().Error())
+	}
+}
