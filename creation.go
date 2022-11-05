@@ -21,3 +21,12 @@ func E(args ...interface{}) error {
 	e.Enrich(args...)
 	return e
 }
+
+// Wrap is used to create a new error based on an existing error, which has to be passed as first argument
+// All potential error attributes can be passed in random order
+func Wrap(err error, args ...interface{}) error {
+	e := createError()
+	e.setCaller(caller())
+	e.Wrap(err, args...)
+	return e
+}

@@ -5,11 +5,12 @@ import "fmt"
 type Error interface {
 	error
 	Message() string
-	Wrap(cause error) error
-	Unwrap() error
 	Severity() Severity
 	Caller() *Caller
+	Unwrap() error
 	Enrich(args ...interface{})
+	Wrap(err error, args ...interface{})
+	Is(err error) bool
 	setCaller(caller *Caller)
 }
 
@@ -26,6 +27,9 @@ func (e *BaseError) Message() string {
 
 func (e *BaseError) Error() string {
 	if e.cause != nil {
+		if e.message == "" {
+			return e.cause.Error()
+		}
 		return fmt.Sprintf("%s: %s", e.Message(), e.cause.Error())
 	}
 	return e.Message()
@@ -80,9 +84,24 @@ func (e *BaseError) Enrich(args ...interface{}) {
 	}
 }
 
-func (e *BaseError) Wrap(cause error) error {
-	e.cause = cause
-	return e
+func (e *BaseError) Is(err error) bool {
+	return e.message == err.Error()
+}
+
+func (e *BaseError) Wrap(err error, args ...interface{}) {
+	e.message = err.Error()
+	for _, arg := range args {
+		switch arg := arg.(type) {
+		case error:
+			e.cause = arg
+		case Severity:
+			e.severity = arg
+		case string:
+			e.message = arg
+		default:
+			// ignore unknown arg types
+		}
+	}
 }
 
 // setCaller is used during the creation to set the caller
