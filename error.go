@@ -5,7 +5,7 @@ import "fmt"
 type Error interface {
 	error
 	Message() string
-	Cause() error
+	Unwrap() error
 	Severity() Severity
 	Kind() Kind
 	Caller() *Caller
@@ -36,7 +36,7 @@ func (e *BaseError) Error() string {
 	return e.Message()
 }
 
-func (e *BaseError) Cause() error {
+func (e *BaseError) Unwrap() error {
 	return e.cause
 }
 

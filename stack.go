@@ -33,11 +33,11 @@ func CallStack(err error) []CallStackEntry {
 
 	res := []CallStackEntry{{ErrMessage: e.Message(), Caller: e.Caller(), Severity: e.Severity()}}
 
-	if e.Cause() == nil {
+	if e.Unwrap() == nil {
 		return res
 	}
 
-	res = append(res, CallStack(e.Cause())...)
+	res = append(res, CallStack(e.Unwrap())...)
 
 	return res
 }

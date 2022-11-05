@@ -36,9 +36,9 @@ func IsInStack(err error, kind Kind) bool {
 		return kind == KindUnexpected
 	}
 
-	if e.Cause() == nil {
+	if e.Unwrap() == nil {
 		return false
 	}
 
-	return IsInStack(e.Cause(), kind)
+	return IsInStack(e.Unwrap(), kind)
 }

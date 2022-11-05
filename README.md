@@ -19,8 +19,18 @@ As arguments, you can pass in any order the following types:
 
 Apart from that, when a new error is created, the call position is remembered so that this information can
 be used later in the call stack.
+If you pass an error to this function, this error will be wrapped by the new error.
 
-Here is an example:
+## Examples:
+
+### Wrapping errors
+
+You can simply wrap errors by passing the previous error to sterrors.E() as parameter.
+
+In the stacktrace every wrapped error is an entry in the trace with its error message.
+However, if you call Error() on the last error in the trace, it will return all error message in the form
+
+{message}: {previous message1}: {previous message1}: ...
 
 ```go
 package main
@@ -38,7 +48,12 @@ func main() {
 	second := sterrors.E("action not possible", sterrors.SeverityError, err)
 	
 	jsonStackTrace, _ := json.Marshal(sterrors.CallStack(second))
-	fmt.Printf("%s", jsonStackTrace)
+	// Print out the error stack trace
+	fmt.Printf("%s \n", jsonStackTrace)
+	// Calling Error() return the wrapped error message
+	fmt.Printf("Simply print the wrapped error message: %s \n", second.Error())
+	// The provided error type also implements the Unwrap() error method so that you can use it with errors.Is()
+	fmt.Printf("Is initial error: %v \n", errors.Is(second, InitialError))
 }
 
 func anotherMethod() error {
@@ -68,6 +83,9 @@ Output:
     }
   }
 ]
+
+Simply print the wrapped error message: action not possible: some error message
+Is initial error: true
 ```
 
 Inspired by a talk from GopherCon 2019: https://www.youtube.com/watch?v=4WIhhzTTd0Y
