@@ -72,4 +72,7 @@ func TestError_Wrap(t *testing.T) {
 	if !errors.Is(err, AnotherError) {
 		t.Errorf("error is not another error")
 	}
+	if err.Error() != "custom error: another error" {
+		t.Errorf("error message is \"%s\" instead of \"%s\"", err.Error(), "custom error: another error")
+	}
 }

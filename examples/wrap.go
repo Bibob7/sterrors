@@ -31,25 +31,35 @@ func anotherMethod() error {
 /*
 Output:
 [
-  {
-    "msg": "action not possible",
-    "caller": {
-      "funcName": "main.main",
-      "file": "/Users/root/Repositories/sterrors/examples/main.go",
-      "line": 13
-    }
-  },
-  {
-    "msg": "some error message",
-    "caller": {
-      "funcName": "main.anotherMethod",
-      "file": "/Users/root/Repositories/sterrors/examples/main.go",
-      "line": 20
-    }
-  }
+   {
+      "msg":"wrapping error",
+      "caller":{
+         "funcName":"main.main",
+         "file":"/Users/kevin/Repositories/sterrors/examples/wrap.go",
+         "line":16
+      }
+   },
+   {
+      "msg":"action not possible",
+      "severity":"error",
+      "caller":{
+         "funcName":"main.main",
+         "file":"/Users/kevin/Repositories/sterrors/examples/wrap.go",
+         "line":16
+      }
+   },
+   {
+      "msg":"some error message",
+      "severity":"warning",
+      "caller":{
+         "funcName":"main.anotherMethod",
+         "file":"/Users/kevin/Repositories/sterrors/examples/wrap.go",
+         "line":28
+      }
+   }
 ]
 
-Simply print the wrapped error message: action not possible: some error message
+Simply print the wrapped error message: wrapping error: action not possible: some error message
 
-Is initial error: true
+Is wrapping error: true
 */
