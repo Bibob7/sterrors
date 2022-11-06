@@ -64,15 +64,59 @@ func TestBaseError_Error(t *testing.T) {
 func TestError_Wrap(t *testing.T) {
 	AnotherError := errors.New("another error")
 	CustomError := errors.New("custom error")
-	err := Wrap(CustomError, AnotherError)
 
-	if !errors.Is(err, CustomError) {
-		t.Errorf("error is not custom error")
+	testCases := map[string]struct {
+		Error            error
+		Message          string
+		CallStackEntries int
+		IsCustomError    bool
+		IsAnotherError   bool
+	}{
+		"With custom error message": {
+			Error:            Wrap(CustomError, "some additional error message", AnotherError),
+			Message:          "custom error: some additional error message: another error",
+			CallStackEntries: 3,
+			IsCustomError:    true,
+			IsAnotherError:   true,
+		},
+		"Wrap with previous error": {
+			Error:            Wrap(CustomError, AnotherError),
+			Message:          "custom error: another error",
+			CallStackEntries: 2,
+			IsCustomError:    true,
+			IsAnotherError:   true,
+		},
+		"Wrap only": {
+			Error:            Wrap(CustomError),
+			Message:          "custom error",
+			CallStackEntries: 1,
+			IsCustomError:    true,
+			IsAnotherError:   false,
+		},
+		"Wrap nothing": {
+			Error:            Wrap(nil),
+			Message:          "",
+			CallStackEntries: 1,
+			IsCustomError:    false,
+			IsAnotherError:   false,
+		},
 	}
-	if !errors.Is(err, AnotherError) {
-		t.Errorf("error is not another error")
-	}
-	if err.Error() != "custom error: another error" {
-		t.Errorf("error message is \"%s\" instead of \"%s\"", err.Error(), "custom error: another error")
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			if tc.IsCustomError && !errors.Is(tc.Error, CustomError) {
+				t.Errorf("error is not custom error")
+			}
+			if tc.IsAnotherError && !errors.Is(tc.Error, AnotherError) {
+				t.Errorf("error is not another error")
+			}
+			if tc.Error.Error() != tc.Message {
+				t.Errorf("error message is \"%s\" instead of \"%s\"", tc.Error.Error(), tc.Message)
+			}
+			callStack := CallStack(tc.Error)
+			numberOfEntries := len(callStack)
+			if numberOfEntries != tc.CallStackEntries {
+				t.Errorf("number of callstack entries is \"%d\" not 3", numberOfEntries)
+			}
+		})
 	}
 }

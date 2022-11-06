@@ -88,7 +88,20 @@ func (e *BaseError) Is(err error) bool {
 }
 
 func (e *BaseError) Wrap(err error, args ...interface{}) {
+	if err == nil {
+		return
+	}
+	numArgs := len(args)
 	e.message = err.Error()
+	if numArgs == 0 {
+		return
+	}
+	if numArgs == 1 {
+		if cause, ok := args[0].(error); ok {
+			e.cause = cause
+			return
+		}
+	}
 	wrappedErr := createError()
 	wrappedErr.setCaller(caller(3))
 	wrappedErr.Enrich(args...)
