@@ -17,7 +17,7 @@ func SetDefaultCreateErrorFunc(customCreateErrorFunc CreateFunc) {
 // All potential error attributes can be passed in random order
 func E(args ...interface{}) error {
 	e := createError()
-	e.setCaller(caller())
+	e.setCaller(caller(2))
 	e.Enrich(args...)
 	return e
 }
@@ -26,7 +26,7 @@ func E(args ...interface{}) error {
 // All potential error attributes can be passed in random order
 func Wrap(err error, args ...interface{}) error {
 	e := createError()
-	e.setCaller(caller())
+	e.setCaller(caller(2))
 	e.Wrap(err, args...)
 	return e
 }

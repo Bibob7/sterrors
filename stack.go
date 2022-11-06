@@ -42,8 +42,8 @@ func CallStack(err error) []CallStackEntry {
 	return res
 }
 
-func caller() *Caller {
-	pc, file, line, _ := runtime.Caller(2)
+func caller(skip int) *Caller {
+	pc, file, line, _ := runtime.Caller(skip)
 	details := runtime.FuncForPC(pc)
 	nameSegments := strings.Split(details.Name(), "/")
 	funcName := details.Name()
