@@ -7,7 +7,7 @@ import (
 )
 
 func callFake() *Caller {
-	return caller()
+	return caller(2)
 }
 
 func TestCallStack(t *testing.T) {
