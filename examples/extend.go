@@ -28,7 +28,7 @@ func main() {
 	})
 	var custom CustomAttribute = 2
 
-	err := sterrors.E("some message", sterrors.SeverityWarning, custom)
+	err := sterrors.E("some message", custom)
 
 	e, _ := err.(*MyError)
 

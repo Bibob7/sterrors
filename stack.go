@@ -12,9 +12,8 @@ type Caller struct {
 }
 
 type CallStackEntry struct {
-	ErrMessage string   `json:"msg,omitempty"`
-	Severity   Severity `json:"severity,omitempty"`
-	Caller     *Caller  `json:"caller,omitempty"`
+	ErrMessage string  `json:"msg,omitempty"`
+	Caller     *Caller `json:"caller,omitempty"`
 }
 
 // CallStack returns the callstack
@@ -31,7 +30,7 @@ func CallStack(err error) []CallStackEntry {
 		return append(stack, CallStackEntry{ErrMessage: err.Error()})
 	}
 
-	res := []CallStackEntry{{ErrMessage: e.Message(), Caller: e.Caller(), Severity: e.Severity()}}
+	res := []CallStackEntry{{ErrMessage: e.Message(), Caller: e.Caller()}}
 
 	if e.Unwrap() == nil {
 		return res
