@@ -5,7 +5,6 @@ import "fmt"
 type Error interface {
 	error
 	Message() string
-	Severity() Severity
 	Caller() *Caller
 	Unwrap() error
 	Enrich(args ...interface{})
@@ -15,10 +14,9 @@ type Error interface {
 }
 
 type BaseError struct {
-	message  string
-	caller   *Caller
-	severity Severity
-	cause    error
+	message string
+	caller  *Caller
+	cause   error
 }
 
 func (e *BaseError) Message() string {
@@ -37,10 +35,6 @@ func (e *BaseError) Error() string {
 
 func (e *BaseError) Unwrap() error {
 	return e.cause
-}
-
-func (e *BaseError) Severity() Severity {
-	return e.severity
 }
 
 func (e *BaseError) Caller() *Caller {
@@ -74,8 +68,6 @@ func (e *BaseError) Enrich(args ...interface{}) {
 		switch arg := arg.(type) {
 		case error:
 			e.cause = arg
-		case Severity:
-			e.severity = arg
 		case string:
 			e.message = arg
 		default:

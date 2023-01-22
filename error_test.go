@@ -9,18 +9,14 @@ import (
 func TestBaseError_Enrich(t *testing.T) {
 	message := "error message"
 	cause := fmt.Errorf("initial error")
-	severity := SeverityInfo
 
 	err := BaseError{}
-	err.Enrich(message, cause, severity)
+	err.Enrich(message, cause)
 
 	if err.message != message {
 		t.Errorf("error message is not equal")
 	}
 	if err.cause != cause {
-		t.Errorf("error cause is not cause")
-	}
-	if err.severity != severity {
 		t.Errorf("error cause is not cause")
 	}
 }
@@ -41,6 +37,10 @@ func TestBaseError_Error(t *testing.T) {
 		"With wrapped error": {
 			Message:              "some message",
 			ExpectedErrorMessage: "some message: previous error",
+			Cause:                errors.New("previous error"),
+		},
+		"With wrapped error, but empty message": {
+			ExpectedErrorMessage: "previous error",
 			Cause:                errors.New("previous error"),
 		},
 	}

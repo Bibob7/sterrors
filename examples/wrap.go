@@ -13,7 +13,7 @@ func main() {
 	err := anotherMethod()
 
 	// second error that results from the first one
-	second := sterrors.Wrap(WrappingError, "action not possible", sterrors.SeverityError, err)
+	second := sterrors.Wrap(WrappingError, "action not possible", err)
 
 	jsonStackTrace, _ := json.Marshal(sterrors.CallStack(second))
 	// Print out the error stack trace
@@ -25,7 +25,7 @@ func main() {
 }
 
 func anotherMethod() error {
-	return sterrors.E("some error message", sterrors.SeverityWarning)
+	return sterrors.E("some error message")
 }
 
 /*
@@ -41,7 +41,6 @@ Output:
    },
    {
       "msg":"action not possible",
-      "severity":"error",
       "caller":{
          "funcName":"main.main",
          "file":"/Users/kevin/Repositories/sterrors/examples/wrap.go",
@@ -50,7 +49,6 @@ Output:
    },
    {
       "msg":"some error message",
-      "severity":"warning",
       "caller":{
          "funcName":"main.anotherMethod",
          "file":"/Users/kevin/Repositories/sterrors/examples/wrap.go",
