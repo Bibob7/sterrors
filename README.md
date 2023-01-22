@@ -14,7 +14,6 @@ The most important function is `sterrors.E(args ...interface{})`. It is used to 
 As arguments, you can pass in any order the following types:
 
 - error
-- sterrors.Severity
 - string (for passing the error message)
 
 Apart from that, when a new error is created, the call position is remembered so that this information can
@@ -45,7 +44,7 @@ func main() {
 	err := anotherMethod()
 
 	// second error that results from the first one
-	second := sterrors.E("action not possible", sterrors.SeverityError, err)
+	second := sterrors.E("action not possible", err)
 	
 	jsonStackTrace, _ := json.Marshal(sterrors.CallStack(second))
 	// Print out the error stack trace
@@ -57,7 +56,7 @@ func main() {
 }
 
 func anotherMethod() error {
-	return sterrors.E("some error message", sterrors.SeverityWarning)
+	return sterrors.E("some error message")
 }
 
 ```
