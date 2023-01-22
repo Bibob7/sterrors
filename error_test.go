@@ -39,6 +39,10 @@ func TestBaseError_Error(t *testing.T) {
 			ExpectedErrorMessage: "some message: previous error",
 			Cause:                errors.New("previous error"),
 		},
+		"With wrapped error, but empty message": {
+			ExpectedErrorMessage: "previous error",
+			Cause:                errors.New("previous error"),
+		},
 	}
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
